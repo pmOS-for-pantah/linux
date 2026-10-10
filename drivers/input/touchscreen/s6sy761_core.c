@@ -7,6 +7,7 @@
 
 #include <linux/unaligned.h>
 #include <linux/delay.h>
+#include <linux/gpio/consumer.h>
 #include <linux/input/mt.h>
 #include <linux/input/touchscreen.h>
 #include <linux/interrupt.h>
@@ -100,6 +101,7 @@ struct s6sy761_data {
 	struct mutex xfer_lock;
 	int irq;
 	struct regulator_bulk_data regulators[2];
+	struct gpio_desc *reset_gpio;
 	struct input_dev *input;
 	struct touchscreen_properties prop;
 
@@ -297,6 +299,9 @@ static int s6sy761_power_on(struct s6sy761_data *sdata)
 	if (ret)
 		return ret;
 
+	usleep_range(10000, 11000);
+	gpiod_set_value_cansleep(sdata->reset_gpio, 0);
+
 	msleep(140);
 
 	/* double check whether the touch is functional */
@@ -370,6 +375,7 @@ static void s6sy761_power_off(void *data)
 	struct s6sy761_data *sdata = data;
 
 	disable_irq(sdata->irq);
+	gpiod_set_value_cansleep(sdata->reset_gpio, 1);
 	regulator_bulk_disable(ARRAY_SIZE(sdata->regulators),
 						sdata->regulators);
 }
@@ -405,6 +411,12 @@ int s6sy761_probe(struct device *dev, const struct s6sy761_bus_ops *bus_ops, int
 				      sdata->regulators);
 	if (err)
 		return err;
+
+	sdata->reset_gpio = devm_gpiod_get_optional(dev, "reset",
+						    GPIOD_OUT_HIGH);
+	if (IS_ERR(sdata->reset_gpio))
+		return dev_err_probe(dev, PTR_ERR(sdata->reset_gpio),
+				     "failed to get reset GPIO\n");
 
 	err = devm_add_action_or_reset(dev, s6sy761_power_off, sdata);
 	if (err)
