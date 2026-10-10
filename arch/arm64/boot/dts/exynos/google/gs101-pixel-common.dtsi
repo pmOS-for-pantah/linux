@@ -399,14 +399,14 @@
 
 			/* ldo23m & ldo24m are unused */
 
-			ldo25m {
+			s2mpg10_ldo25m: ldo25m {
 				/* touch */
 				regulator-name = "dvdd_tsp";
 				regulator-min-microvolt = <1600000>;
 				regulator-max-microvolt = <1950000>;
 			};
 
-			ldo26m {
+			s2mpg10_ldo26m: ldo26m {
 				/* touch */
 				regulator-name = "avdd_ts";
 				regulator-min-microvolt = <2500000>;
