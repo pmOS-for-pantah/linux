@@ -24430,6 +24430,13 @@ F:	Documentation/devicetree/bindings/media/samsung,exynos4212-fimc-lite.yaml
 F:	Documentation/devicetree/bindings/media/samsung,fimc.yaml
 F:	drivers/media/platform/samsung/exynos4-is/
 
+SAMSUNG S6SY761 TOUCHSCREEN DRIVER
+M:	Lukas Timmermann <foss@timmermann.space>
+L:	linux-input@vger.kernel.org
+S:	Maintained
+F:	Documentation/devicetree/bindings/input/touchscreen/samsung,s6sy761.yaml
+F:	drivers/input/touchscreen/s6sy761*
+
 SAMSUNG SOC CLOCK DRIVERS
 M:	Krzysztof Kozlowski <krzk@kernel.org>
 M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
