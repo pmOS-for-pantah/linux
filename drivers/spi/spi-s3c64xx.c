@@ -777,6 +777,8 @@ static int s3c64xx_spi_prepare_message(struct spi_controller *host,
 	struct s3c64xx_spi_driver_data *sdd = spi_controller_get_devdata(host);
 	struct spi_device *spi = msg->spi;
 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+	struct spi_transfer *xfer;
+	int ret;
 
 	/* Configure feedback delay */
 	if (!cs)
@@ -784,6 +786,23 @@ static int s3c64xx_spi_prepare_message(struct spi_controller *host,
 		writel(0, sdd->regs + S3C64XX_SPI_FB_CLK);
 	else
 		writel(cs->fb_delay & 0x3, sdd->regs + S3C64XX_SPI_FB_CLK);
+
+	/*
+	 * Apply the mode before the core asserts chip select, otherwise the
+	 * clock changes its idle level while the device is already selected.
+	 */
+	xfer = list_first_entry_or_null(&msg->transfers, struct spi_transfer,
+					transfer_list);
+	if (xfer && (spi->mode != sdd->cur_mode ||
+		     xfer->bits_per_word != sdd->cur_bpw ||
+		     xfer->speed_hz != sdd->cur_speed)) {
+		sdd->cur_mode = spi->mode;
+		sdd->cur_bpw = xfer->bits_per_word;
+		sdd->cur_speed = xfer->speed_hz;
+		ret = s3c64xx_spi_config(sdd);
+		if (ret)
+			return ret;
+	}
 
 	return 0;
 }
