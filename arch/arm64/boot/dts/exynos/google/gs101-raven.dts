@@ -47,3 +47,53 @@
 
 	status = "okay";
 };
+
+&gpp26 {
+	/* TS_SPI_SEL: low = AP owns the touch SPI bus, high = AOC */
+	ts-spi-sel-hog {
+		gpio-hog;
+		gpios = <1 GPIO_ACTIVE_HIGH>;
+		output-low;
+		line-name = "ts-spi-sel";
+	};
+};
+
+&pinctrl_gpio_alive {
+	ts_irq: ts-irq-pins {
+		samsung,pins = "gpa9-0";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
+};
+
+&spi_11 {
+	cs-gpios = <&gpp23 3 GPIO_ACTIVE_LOW>;
+	num-cs = <1>;
+	pinctrl-0 = <&spi11_bus &spi11_cs>;
+	pinctrl-names = "default";
+	status = "okay";
+
+	touchscreen@0 {
+		compatible = "samsung,s6sy791";
+		reg = <0>;
+		spi-max-frequency = <10000000>;
+		spi-cpol;
+		spi-cpha;
+
+		interrupt-parent = <&gpa9>;
+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+		pinctrl-0 = <&ts_irq>;
+		pinctrl-names = "default";
+
+		reset-gpios = <&gpp26 0 GPIO_ACTIVE_LOW>;
+
+		vdd-supply = <&s2mpg10_ldo25m>;
+		avdd-supply = <&s2mpg10_ldo26m>;
+	};
+};
+
+&usi11 {
+	samsung,mode = <USI_MODE_SPI>;
+	status = "okay";
+};

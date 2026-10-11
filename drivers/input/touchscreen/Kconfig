@@ -528,15 +528,25 @@ config TOUCHSCREEN_IPROC
 	  module will be called bcm_iproc_tsc.
 
 config TOUCHSCREEN_S6SY761
-	tristate "Samsung S6SY761 Touchscreen driver"
-	depends on I2C
+	tristate "Samsung S6SY761/S6SY791 Touchscreen driver"
+	depends on I2C || SPI
 	help
-	  Say Y if you have the Samsung S6SY761 driver
+	  Say Y here if you have a Samsung S6SY761 or S6SY791
+	  touchscreen controller connected to your system via I2C or SPI.
 
 	  If unsure, say N
 
-	  To compile this driver as module, choose M here: the
-	  module will be called s6sy761.
+	  To compile this driver as a module, choose M here: the
+	  modules will be called s6sy761_core, s6sy761_i2c and
+	  s6sy761_spi.
+	select TOUCHSCREEN_S6SY761_I2C if I2C
+	select TOUCHSCREEN_S6SY761_SPI if SPI
+
+config TOUCHSCREEN_S6SY761_I2C
+	tristate
+
+config TOUCHSCREEN_S6SY761_SPI
+	tristate
 
 config TOUCHSCREEN_GUNZE
 	tristate "Gunze AHL-51S touchscreen"

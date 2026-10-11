@@ -8,13 +8,17 @@ title: Samsung S6SY761 touchscreen controller
 
 maintainers:
   - Andi Shyti <andi.shyti@kernel.org>
+  - Lukas Timmermann <foss@timmermann.space>
 
 allOf:
   - $ref: touchscreen.yaml#
+  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 
 properties:
   compatible:
-    const: samsung,s6sy761
+    enum:
+      - samsung,s6sy761
+      - samsung,s6sy791
 
   reg:
     maxItems: 1
@@ -22,8 +26,18 @@ properties:
   interrupts:
     maxItems: 1
 
+  reset-gpios:
+    maxItems: 1
+    description: GPIO connected to the reset pin of the controller
+
   avdd-supply: true
   vdd-supply: true
+
+  spi-max-frequency: true
+
+  spi-cpha: true
+
+  spi-cpol: true
 
 unevaluatedProperties: false
 
@@ -50,5 +64,26 @@ examples:
             vdd-supply = <&ldo31_reg>;
             touchscreen-size-x = <4096>;
             touchscreen-size-y = <4096>;
+        };
+    };
+
+  - |
+    #include <dt-bindings/gpio/gpio.h>
+    #include <dt-bindings/interrupt-controller/irq.h>
+    spi {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        touchscreen@0 {
+            compatible = "samsung,s6sy791";
+            reg = <0>;
+            spi-max-frequency = <10000000>;
+            spi-cpol;
+            spi-cpha;
+            interrupt-parent = <&gpa9>;
+            interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+            reset-gpios = <&gpp26 0 GPIO_ACTIVE_LOW>;
+            avdd-supply = <&ldo26_reg>;
+            vdd-supply = <&ldo25_reg>;
         };
     };
