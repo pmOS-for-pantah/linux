@@ -790,12 +790,20 @@ static bool exynos5_i2c_poll_irqs_timeout(struct exynos5_i2c *i2c,
 static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
 			      struct i2c_msg *msgs, int stop)
 {
-	unsigned long time_left;
+	unsigned long time_left, timeout;
 	int ret;
 
 	i2c->msg = msgs;
 	i2c->msg_ptr = 0;
 	i2c->trans_done = 0;
+
+	/*
+	 * A long message (a DSP firmware block, say) needs more than the
+	 * fixed allowance: add its time on the wire, 9 bit times a byte.
+	 */
+	timeout = EXYNOS5_I2C_TIMEOUT +
+		  msecs_to_jiffies(DIV_ROUND_UP(msgs->len * 9 * MSEC_PER_SEC,
+						i2c->op_clock));
 
 	reinit_completion(&i2c->msg_complete);
 
@@ -803,10 +811,9 @@ static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
 
 	if (!i2c->atomic)
 		time_left = wait_for_completion_timeout(&i2c->msg_complete,
-							EXYNOS5_I2C_TIMEOUT);
+							timeout);
 	else
-		time_left = exynos5_i2c_poll_irqs_timeout(i2c,
-							  EXYNOS5_I2C_TIMEOUT);
+		time_left = exynos5_i2c_poll_irqs_timeout(i2c, timeout);
 
 	if (time_left == 0)
 		ret = -ETIMEDOUT;
