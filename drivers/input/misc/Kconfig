@@ -158,6 +158,21 @@ config INPUT_BMA150
 	  To compile this driver as a module, choose M here: the
 	  module will be called bma150.
 
+config INPUT_CS40L26_VIBRA
+	tristate "Cirrus Logic CS40L26 haptic driver"
+	depends on I2C
+	select REGMAP_I2C
+	select FW_CS_DSP
+	select INPUT_FF_MEMLESS
+	help
+	  Say Y here to enable force-feedback (rumble) support for the
+	  Cirrus Logic CS40L26 boosted haptic driver, as used in Google
+	  Pixel phones. The driver loads the part's RAM firmware
+	  (cs40l26.wmfw) and plays vibration through its buzz generator.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called cs40l26-vibra.
+
 config INPUT_CS40L50_VIBRA
 	tristate "CS40L50 Haptic Driver support"
 	depends on MFD_CS40L50_CORE
