@@ -208,6 +208,11 @@ int btbcm_write_pcm_int_params(struct hci_dev *hdev,
 }
 EXPORT_SYMBOL_GPL(btbcm_write_pcm_int_params);
 
+static bool patchram_nowait;
+module_param(patchram_nowait, bool, 0644);
+MODULE_PARM_DESC(patchram_nowait,
+		 "Send patch records without waiting for each Command Complete; only Launch RAM is waited for (bring-up aid)");
+
 int btbcm_patchram(struct hci_dev *hdev, const struct firmware *fw)
 {
 	const struct hci_command_hdr *cmd;
@@ -250,6 +255,22 @@ int btbcm_patchram(struct hci_dev *hdev, const struct firmware *fw)
 		fw_size -= cmd->plen;
 
 		opcode = le16_to_cpu(cmd->opcode);
+
+		/*
+		 * Some controllers do not answer every Write RAM record. With
+		 * patchram_nowait, stream the records (UART flow control paces
+		 * the link) and wait only for the final Launch RAM.
+		 */
+		if (patchram_nowait && opcode != 0xfc4e) {
+			err = __hci_cmd_send(hdev, opcode, cmd->plen, cmd_param);
+			if (err) {
+				bt_dev_err(hdev, "BCM: Patch command %04x send failed (%d)",
+					   opcode, err);
+				return err;
+			}
+			usleep_range(1000, 2000);
+			continue;
+		}
 
 		skb = __hci_cmd_sync(hdev, opcode, cmd->plen, cmd_param,
 				     HCI_INIT_TIMEOUT);
