@@ -55,6 +55,11 @@ properties:
               - samsung,exynosautov9-wakeup-eint
           - const: samsung,exynos850-wakeup-eint
           - const: samsung,exynos7-wakeup-eint
+      - items:
+          - const: google,gs201-wakeup-eint
+          - const: google,gs101-wakeup-eint
+          - const: samsung,exynos850-wakeup-eint
+          - const: samsung,exynos7-wakeup-eint
 
   interrupts:
     description:
