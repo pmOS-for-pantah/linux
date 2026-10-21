@@ -236,6 +236,18 @@
 		.name			= id				\
 	}
 
+#define GS201_PIN_BANK_EINTW(pins, reg, id, offs, fltcon_offs, num) \
+	{								\
+		.type			= &exynos850_bank_type_alive,	\
+		.pctl_offset		= reg,				\
+		.nr_pins		= pins,				\
+		.eint_type		= EINT_TYPE_WKUP,		\
+		.eint_offset		= offs,				\
+		.eint_num		= num,				\
+		.eint_fltcon_offset	= fltcon_offs,			\
+		.name			= id				\
+	}
+
 #define ARTPEC_PIN_BANK_EINTG(pins, reg, id, offs)			\
 	{								\
 		.type			= &artpec_bank_type_off,	\
