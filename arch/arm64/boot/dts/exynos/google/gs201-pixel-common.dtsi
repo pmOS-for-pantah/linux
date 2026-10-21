@@ -12,8 +12,12 @@
 
 / {
 	chosen {
-		/* Bootloader expects bootargs specified otherwise it crashes */
-		bootargs = "";
+		/*
+		 * Bootloader expects bootargs specified otherwise it crashes.
+		 * It also drops console= from the boot image command lines and
+		 * appends console=null, so the console has to be set here.
+		 */
+		bootargs = "console=tty0";
 
 		/* Use display framebuffer as setup by bootloader */
 		framebuffer0: framebuffer-0 {
