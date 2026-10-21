@@ -2066,6 +2066,18 @@ static int gs101_ufs_pre_link(struct exynos_ufs *ufs)
 	return 0;
 }
 
+static int gs201_ufs_pre_link(struct exynos_ufs *ufs)
+{
+	struct ufs_hba *hba = ufs->hba;
+
+	/* Select the 38.4 MHz PHY reference clock */
+	ufshcd_dme_set(hba, UIC_ARG_MIB(0x200), 0x40);
+	ufshcd_dme_set(hba, UIC_ARG_MIB(0x202), 0x2);
+	ufshcd_dme_set(hba, UIC_ARG_MIB(0x200), 0x0);
+
+	return gs101_ufs_pre_link(ufs);
+}
+
 static int gs101_ufs_post_link(struct exynos_ufs *ufs)
 {
 	struct ufs_hba *hba = ufs->hba;
@@ -2294,6 +2306,28 @@ static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
 	.suspend		= gs101_ufs_suspend,
 };
 
+/*
+ * The gs201 controller follows the UFSHCI specification for the PRDT
+ * offsets, request list clearing, OCS and interrupt aggregation, so it
+ * drops those gs101 quirks. Idle power management uses hibern8 with
+ * clock gating, so keep the auto-hibernate timer off.
+ */
+static const struct exynos_ufs_drv_data gs201_ufs_drvs = {
+	.uic_attr		= &gs101_uic_attr,
+	.quirks			= UFSHCI_QUIRK_SKIP_MANUAL_WB_FLUSH_CTRL |
+				  UFSHCD_QUIRK_BROKEN_AUTO_HIBERN8 |
+				  UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING,
+	.opts			= EXYNOS_UFS_OPT_SKIP_CONFIG_PHY_ATTR |
+				  EXYNOS_UFS_OPT_UFSPR_SECURE |
+				  EXYNOS_UFS_OPT_TIMER_TICK_SELECT,
+	.iocc_mask		= UFS_GS101_SHARABLE,
+	.drv_init		= gs101_ufs_drv_init,
+	.pre_link		= gs201_ufs_pre_link,
+	.post_link		= gs101_ufs_post_link,
+	.pre_pwr_change		= gs101_ufs_pre_pwr_change,
+	.suspend		= gs101_ufs_suspend,
+};
+
 static const struct exynos_ufs_drv_data exynosautov920_ufs_drvs = {
 	.uic_attr               = &exynos7_uic_attr,
 	.quirks                 = UFSHCD_QUIRK_SKIP_DEF_UNIPRO_TIMEOUT_SETTING,
@@ -2312,6 +2346,8 @@ static const struct exynos_ufs_drv_data exynosautov920_ufs_drvs = {
 static const struct of_device_id exynos_ufs_of_match[] = {
 	{ .compatible = "google,gs101-ufs",
 	  .data	      = &gs101_ufs_drvs },
+	{ .compatible = "google,gs201-ufs",
+	  .data	      = &gs201_ufs_drvs },
 	{ .compatible = "samsung,exynos7-ufs",
 	  .data	      = &exynos_ufs_drvs },
 	{ .compatible = "samsung,exynosautov9-ufs",
