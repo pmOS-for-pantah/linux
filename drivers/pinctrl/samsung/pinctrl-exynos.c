@@ -808,6 +808,8 @@ __init int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
 			return -ENXIO;
 		}
 
+		if (bank->eint_num)
+			eint_num = bank->eint_num;
 		bank->eint_num = eint_num;
 		eint_num = eint_num + bank->nr_pins;
 
