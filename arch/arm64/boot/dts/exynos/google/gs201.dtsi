@@ -336,6 +336,18 @@
 			status = "disabled";
 		};
 
+		pmu_system_controller: system-controller@18060000 {
+			compatible = "google,gs201-pmu", "google,gs101-pmu";
+			reg = <0x18060000 0x10000>;
+			google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
+		};
+
+		pmu_intr_gen: syscon@18070000 {
+			compatible = "google,gs201-pmu-intr-gen",
+				     "google,gs101-pmu-intr-gen", "syscon";
+			reg = <0x18070000 0x10000>;
+		};
+
 		pinctrl_gpio_alive: pinctrl@180d0000 {
 			compatible = "google,gs201-pinctrl";
 			reg = <0x180d0000 0x00001000>;
