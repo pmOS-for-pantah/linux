@@ -28,6 +28,9 @@ properties:
           - samsung,exynosautov9-wdt              # for Exynosautov9
           - samsung,exynosautov920-wdt            # for Exynosautov920
       - items:
+          - const: google,gs201-wdt
+          - const: google,gs101-wdt
+      - items:
           - enum:
               - tesla,fsd-wdt
           - const: samsung,exynos7-wdt
