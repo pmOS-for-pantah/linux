@@ -28,6 +28,7 @@ properties:
               - axis,artpec8-mct
               - axis,artpec9-mct
               - google,gs101-mct
+              - google,gs201-mct
               - samsung,exynos2200-mct-peris
               - samsung,exynos3250-mct
               - samsung,exynos5250-mct
@@ -134,6 +135,7 @@ allOf:
               - axis,artpec8-mct
               - axis,artpec9-mct
               - google,gs101-mct
+              - google,gs201-mct
               - samsung,exynos2200-mct-peris
               - samsung,exynos5260-mct
               - samsung,exynos5420-mct
