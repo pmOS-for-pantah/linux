@@ -30,6 +30,12 @@
 		};
 	};
 
+	/* TODO: Replace with the S2MPG12 and S2MPG13 rails */
+	reg_placeholder: regulator-0 {
+		compatible = "regulator-fixed";
+		regulator-name = "placeholder_reg";
+	};
+
 	/* TODO: Remove this once S2MPG13 slave PMIC is implemented */
 	ufs_0_fixed_vcc_reg: regulator-1 {
 		compatible = "regulator-fixed";
@@ -61,6 +67,39 @@
 };
 
 &ufs_0_phy {
+	status = "okay";
+};
+
+&usbdrd31 {
+	vdd10-supply = <&reg_placeholder>;
+	vdd33-supply = <&reg_placeholder>;
+
+	status = "okay";
+};
+
+/*
+ * TODO: Switch to OTG with role and orientation switching once the
+ * MAX77759 Type-C port controller is described. Until then the PHY forces
+ * VBUS valid, so run as a USB 2.0 peripheral.
+ */
+&usbdrd31_dwc3 {
+	dr_mode = "peripheral";
+	maximum-speed = "high-speed";
+	phys = <&usbdrd31_phy 0>;
+	phy-names = "usb2-phy";
+
+	status = "okay";
+};
+
+&usbdrd31_phy {
+	/* TODO: Update these once PMIC is implemented */
+	pll-supply = <&reg_placeholder>;
+	dvdd-usb20-supply = <&reg_placeholder>;
+	vddh-usb20-supply = <&reg_placeholder>;
+	vdd33-usb20-supply = <&reg_placeholder>;
+	vdda-usbdp-supply = <&reg_placeholder>;
+	vddh-usbdp-supply = <&reg_placeholder>;
+
 	status = "okay";
 };
 
