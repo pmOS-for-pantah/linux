@@ -14,9 +14,14 @@ maintainers:
 
 properties:
   compatible:
-    items:
-      - const: google,gs101-pmu-intr-gen
-      - const: syscon
+    oneOf:
+      - items:
+          - const: google,gs101-pmu-intr-gen
+          - const: syscon
+      - items:
+          - const: google,gs201-pmu-intr-gen
+          - const: google,gs101-pmu-intr-gen
+          - const: syscon
 
   reg:
     maxItems: 1

@@ -15,6 +15,9 @@ properties:
       - enum:
           - google,gs101-pmu
       - items:
+          - const: google,gs201-pmu
+          - const: google,gs101-pmu
+      - items:
           - enum:
               - samsung,exynos3250-pmu
               - samsung,exynos4210-pmu
