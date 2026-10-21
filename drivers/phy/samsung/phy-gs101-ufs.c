@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
- * UFS PHY driver data for Google Tensor gs101 SoC
+ * UFS PHY driver data for Google Tensor gs101 and gs201 SoCs
  *
  * Copyright (C) 2024 Linaro Ltd
  * Author: Peter Griffin <peter.griffin@linaro.org>
@@ -95,6 +95,80 @@ static const struct samsung_ufs_phy_cfg tensor_gs101_pre_init_cfg[] = {
 	END_UFS_PHY_CFG,
 };
 
+/*
+ * gs201 runs the PHY from a 38.4 MHz reference clock, otherwise the
+ * initialization sequence is the same as on gs101.
+ */
+static const struct samsung_ufs_phy_cfg tensor_gs201_pre_init_cfg[] = {
+	PHY_COMN_REG_CFG(0x29, 0x22,  PWR_MODE_ANY),
+	PHY_COMN_REG_CFG(0x43, 0x10,  PWR_MODE_ANY),
+	PHY_COMN_REG_CFG(0x3C, 0x14,  PWR_MODE_ANY),
+	PHY_COMN_REG_CFG(0x46, 0x48,  PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x200, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x201, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x202, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x203, 0x0a, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x204, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x205, 0x11, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x207, 0x0c, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2E1, 0xc0, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x22D, 0xb8, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x234, 0x60, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x238, 0x13, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x239, 0x48, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23A, 0x01, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23B, 0x25, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23C, 0x2a, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23D, 0x01, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23E, 0x13, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x23F, 0x13, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x240, 0x4a, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x243, 0x40, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x244, 0x02, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x25D, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x25E, 0x3f, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x25F, 0xff, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x273, 0x33, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x274, 0x50, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x284, 0x02, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x285, 0x02, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2A2, 0x04, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x25D, 0x01, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2FA, 0x01, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x286, 0x03, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x287, 0x03, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x288, 0x03, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x289, 0x03, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2B3, 0x04, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2B6, 0x0b, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2B7, 0x0b, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2B8, 0x0b, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2B9, 0x0b, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2BA, 0x0b, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2BB, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2BC, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2BD, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x29E, 0x06, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2E4, 0x1a, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2ED, 0x25, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x269, 0x1a, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x2F4, 0x2f, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x34B, 0x01, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x34C, 0x23, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x34D, 0x23, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x34E, 0x45, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x34F, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x350, 0x31, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x351, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x352, 0x02, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x353, 0x00, PWR_MODE_ANY),
+	PHY_TRSV_REG_CFG_GS101(0x354, 0x01, PWR_MODE_ANY),
+	PHY_COMN_REG_CFG(0x43, 0x18, PWR_MODE_ANY),
+	PHY_COMN_REG_CFG(0x43, 0x00, PWR_MODE_ANY),
+	END_UFS_PHY_CFG,
+};
+
+
 static const struct samsung_ufs_phy_cfg tensor_gs101_pre_pwr_hs_config[] = {
 	PHY_TRSV_REG_CFG_GS101(0x369, 0x11, PWR_MODE_ANY),
 	PHY_TRSV_REG_CFG_GS101(0x246, 0x03, PWR_MODE_ANY),
@@ -140,6 +214,12 @@ static const struct samsung_ufs_phy_cfg *tensor_gs101_ufs_phy_cfgs[CFG_TAG_MAX] 
 static const struct samsung_ufs_phy_cfg *tensor_gs101_hibern8_cfgs[] = {
 	[CFG_POST_HIBERN8_ENTER]	= tensor_gs101_post_h8_enter,
 	[CFG_PRE_HIBERN8_EXIT]		= tensor_gs101_pre_h8_exit,
+};
+
+static const struct samsung_ufs_phy_cfg *tensor_gs201_ufs_phy_cfgs[CFG_TAG_MAX] = {
+	[CFG_PRE_INIT]		= tensor_gs201_pre_init_cfg,
+	[CFG_PRE_PWR_HS]	= tensor_gs101_pre_pwr_hs_config,
+	[CFG_POST_PWR_HS]	= tensor_gs101_post_pwr_hs_config,
 };
 
 static const char * const tensor_gs101_ufs_phy_clks[] = {
@@ -198,6 +278,20 @@ static int gs101_phy_wait_for_cdr_lock(struct phy *phy, u8 lane)
 
 const struct samsung_ufs_phy_drvdata tensor_gs101_ufs_phy = {
 	.cfgs = tensor_gs101_ufs_phy_cfgs,
+	.cfgs_hibern8 = tensor_gs101_hibern8_cfgs,
+	.isol = {
+		.offset = TENSOR_GS101_PHY_CTRL,
+		.mask = TENSOR_GS101_PHY_CTRL_MASK,
+		.en = TENSOR_GS101_PHY_CTRL_EN,
+	},
+	.clk_list = tensor_gs101_ufs_phy_clks,
+	.num_clks = ARRAY_SIZE(tensor_gs101_ufs_phy_clks),
+	.wait_for_cal = gs101_phy_wait_for_calibration,
+	.wait_for_cdr = gs101_phy_wait_for_cdr_lock,
+};
+
+const struct samsung_ufs_phy_drvdata tensor_gs201_ufs_phy = {
+	.cfgs = tensor_gs201_ufs_phy_cfgs,
 	.cfgs_hibern8 = tensor_gs101_hibern8_cfgs,
 	.isol = {
 		.offset = TENSOR_GS101_PHY_CTRL,
