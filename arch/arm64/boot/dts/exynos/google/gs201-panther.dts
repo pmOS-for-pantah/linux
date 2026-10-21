@@ -8,6 +8,9 @@
 
 /dts-v1/;
 
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include "gs101-pinctrl.h"
 #include "gs201-pixel-common.dtsi"
 
 / {
@@ -20,6 +23,26 @@
 	 * units are B0, which is revision 1.
 	 */
 	soc_id = <0x09855001 0x0>;
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&key_voldown>, <&key_volup>;
+		pinctrl-names = "default";
+
+		button-vol-down {
+			label = "KEY_VOLUMEDOWN";
+			linux,code = <KEY_VOLUMEDOWN>;
+			gpios = <&gpa10 1 GPIO_ACTIVE_LOW>;
+			wakeup-source;
+		};
+
+		button-vol-up {
+			label = "KEY_VOLUMEUP";
+			linux,code = <KEY_VOLUMEUP>;
+			gpios = <&gpa8 5 GPIO_ACTIVE_LOW>;
+			wakeup-source;
+		};
+	};
 };
 
 &cont_splash_mem {
@@ -35,4 +58,22 @@
 	format = "a8r8g8b8";
 
 	status = "okay";
+};
+
+&pinctrl_far_alive {
+	key_volup: key-volup-pins {
+		samsung,pins = "gpa8-5";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
+};
+
+&pinctrl_gpio_alive {
+	key_voldown: key-voldown-pins {
+		samsung,pins = "gpa10-1";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
 };
