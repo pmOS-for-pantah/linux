@@ -15,6 +15,18 @@
 
 	interrupt-parent = <&gic>;
 
+	aliases {
+		pinctrl0 = &pinctrl_gpio_alive;
+		pinctrl1 = &pinctrl_far_alive;
+		pinctrl2 = &pinctrl_gsacore;
+		pinctrl3 = &pinctrl_gsactrl;
+		pinctrl4 = &pinctrl_peric0;
+		pinctrl5 = &pinctrl_peric1;
+		pinctrl6 = &pinctrl_hsi1;
+		pinctrl7 = &pinctrl_hsi2;
+		pinctrl8 = &pinctrl_hsi2ufs;
+	};
+
 	cpus {
 		#address-cells = <1>;
 		#size-cells = <0>;
@@ -278,6 +290,72 @@
 				};
 			};
 		};
+
+		pinctrl_peric0: pinctrl@10840000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x10840000 0x00001000>;
+			interrupts = <GIC_SPI 664 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		pinctrl_peric1: pinctrl@10c40000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x10c40000 0x00001000>;
+			interrupts = <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		pinctrl_hsi1: pinctrl@11840000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x11840000 0x00001000>;
+			interrupts = <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		pinctrl_hsi2: pinctrl@14440000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x14440000 0x00001000>;
+			interrupts = <GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		pinctrl_hsi2ufs: pinctrl@14460000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x14460000 0x00001000>;
+			interrupts = <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		pinctrl_gsactrl: pinctrl@17940000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x17940000 0x00001000>;
+		};
+
+		pinctrl_gsacore: pinctrl@17a80000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x17a80000 0x00001000>;
+
+			status = "disabled";
+		};
+
+		pinctrl_gpio_alive: pinctrl@180d0000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x180d0000 0x00001000>;
+
+			wakeup-interrupt-controller {
+				compatible = "google,gs201-wakeup-eint",
+					     "google,gs101-wakeup-eint",
+					     "samsung,exynos850-wakeup-eint",
+					     "samsung,exynos7-wakeup-eint";
+			};
+		};
+
+		pinctrl_far_alive: pinctrl@180e0000 {
+			compatible = "google,gs201-pinctrl";
+			reg = <0x180e0000 0x00001000>;
+
+			wakeup-interrupt-controller {
+				compatible = "google,gs201-wakeup-eint",
+					     "google,gs101-wakeup-eint",
+					     "samsung,exynos850-wakeup-eint",
+					     "samsung,exynos7-wakeup-eint";
+			};
+		};
 	};
 
 	timer {
@@ -289,3 +367,5 @@
 		   <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW) 0>;
 	};
 };
+
+#include "gs201-pinctrl.dtsi"
