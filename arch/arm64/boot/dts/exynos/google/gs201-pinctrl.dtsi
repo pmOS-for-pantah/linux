@@ -6,6 +6,8 @@
  * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
  */
 
+#include "gs101-pinctrl.h"
+
 &pinctrl_gpio_alive {
 	gpa0: gpa0-gpio-bank {
 		gpio-controller;
@@ -242,6 +244,22 @@
 		#gpio-cells = <2>;
 		interrupt-controller;
 		#interrupt-cells = <2>;
+	};
+
+	ufs_rst_n: ufs-rst-n-pins {
+		samsung,pins = "gph3-1";
+		samsung,pin-function = <GS101_PIN_FUNC_2>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-con-pdn = <GS101_PIN_PDN_PREV>;
+		samsung,pin-pud-pdn = <GS101_PIN_PULL_NONE>;
+	};
+
+	ufs_refclk_out: ufs-refclk-out-pins {
+		samsung,pins = "gph3-0";
+		samsung,pin-function = <GS101_PIN_FUNC_2>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-con-pdn = <GS101_PIN_PDN_PREV>;
+		samsung,pin-pud-pdn = <GS101_PIN_PULL_NONE>;
 	};
 };
 

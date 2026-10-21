@@ -8,6 +8,7 @@
 
 /dts-v1/;
 
+#include <dt-bindings/gpio/gpio.h>
 #include "gs201.dtsi"
 
 / {
@@ -29,6 +30,15 @@
 		};
 	};
 
+	/* TODO: Remove this once S2MPG13 slave PMIC is implemented */
+	ufs_0_fixed_vcc_reg: regulator-1 {
+		compatible = "regulator-fixed";
+		regulator-name = "ufs-vcc";
+		gpio = <&gpp0 1 GPIO_ACTIVE_HIGH>;
+		regulator-boot-on;
+		enable-active-high;
+	};
+
 	reserved-memory {
 		cont_splash_mem: splash@fac00000 {
 			/* size to be updated by actual board */
@@ -42,4 +52,14 @@
 
 &ext_24_5m {
 	clock-frequency = <24576000>;
+};
+
+&ufs_0 {
+	vcc-supply = <&ufs_0_fixed_vcc_reg>;
+
+	status = "okay";
+};
+
+&ufs_0_phy {
+	status = "okay";
 };
