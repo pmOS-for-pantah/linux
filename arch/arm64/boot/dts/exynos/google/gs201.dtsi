@@ -203,7 +203,8 @@
 
 	/*
 	 * The bootloader adds the secure world carve-outs (sec_dram, sec_pt
-	 * and pkvm_guest_firmware) to this node at boot.
+	 * and pkvm_guest_firmware) and debug_kinfo_reserved to this node at
+	 * boot.
 	 */
 	reserved_memory: reserved-memory {
 		#address-cells = <2>;
@@ -247,11 +248,6 @@
 
 		dss_log_reserved: dss-log-reserved@fd3f0000 {
 			reg = <0x0 0xfd3f0000 0x0000e000>;
-			no-map;
-		};
-
-		debug_kinfo_reserved: debug-kinfo-reserved@fd3fe000 {
-			reg = <0x0 0xfd3fe000 0x00001000>;
 			no-map;
 		};
 
