@@ -53,6 +53,16 @@ properties:
     type: object
     additionalProperties: false
 
+  soc_id:
+    $ref: /schemas/types.yaml#/definitions/uint32-array
+    description:
+      Used by the gs201 bootloader to pick the base DTB that matches the chip.
+      The first cell is the product id ORed with the major revision of the
+      chip.
+    items:
+      - description: product id ORed with the major revision
+      - const: 0
+
 required:
   - ect
 
