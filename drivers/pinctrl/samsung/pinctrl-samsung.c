@@ -1287,7 +1287,8 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
 		drvdata->retention_ctrl = ctrl->retention_data->init(drvdata,
 							  ctrl->retention_data);
 		if (IS_ERR(drvdata->retention_ctrl)) {
-			ret = PTR_ERR(drvdata->retention_ctrl);
+			ret = dev_err_probe(dev, PTR_ERR(drvdata->retention_ctrl),
+					    "failed to set up retention control\n");
 			goto err_put_banks;
 		}
 	}
