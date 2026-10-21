@@ -63,3 +63,9 @@
 &ufs_0_phy {
 	status = "okay";
 };
+
+&watchdog_cl0 {
+	timeout-sec = <30>;
+
+	status = "okay";
+};
