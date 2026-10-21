@@ -6,6 +6,7 @@
  * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
  */
 
+#include <dt-bindings/clock/google,gs201.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
 / {
@@ -264,11 +265,26 @@
 		};
 	};
 
+	ext_24_5m: clock-1 {
+		compatible = "fixed-clock";
+		#clock-cells = <0>;
+		clock-output-names = "oscclk";
+	};
+
 	soc: soc@0 {
 		compatible = "simple-bus";
 		#address-cells = <1>;
 		#size-cells = <1>;
 		ranges = <0x0 0x0 0x0 0x40000000>;
+
+		cmu_misc: clock-controller@10010000 {
+			compatible = "google,gs201-cmu-misc";
+			reg = <0x10010000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&cmu_top CLK_DOUT_CMU_MISC_NOC>,
+				 <&cmu_top CLK_DOUT_CMU_MISC_SSS>;
+			clock-names = "bus", "sss";
+		};
 
 		gic: interrupt-controller@10400000 {
 			compatible = "arm,gic-v3";
@@ -294,10 +310,30 @@
 			};
 		};
 
+		cmu_peric0: clock-controller@10800000 {
+			compatible = "google,gs201-cmu-peric0";
+			reg = <0x10800000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>,
+				 <&cmu_top CLK_DOUT_CMU_PERIC0_NOC>,
+				 <&cmu_top CLK_DOUT_CMU_PERIC0_IP>;
+			clock-names = "oscclk", "bus", "ip";
+		};
+
 		pinctrl_peric0: pinctrl@10840000 {
 			compatible = "google,gs201-pinctrl";
 			reg = <0x10840000 0x00001000>;
 			interrupts = <GIC_SPI 664 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		cmu_peric1: clock-controller@10c00000 {
+			compatible = "google,gs201-cmu-peric1";
+			reg = <0x10c00000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>,
+				 <&cmu_top CLK_DOUT_CMU_PERIC1_NOC>,
+				 <&cmu_top CLK_DOUT_CMU_PERIC1_IP>;
+			clock-names = "oscclk", "bus", "ip";
 		};
 
 		pinctrl_peric1: pinctrl@10c40000 {
@@ -306,10 +342,35 @@
 			interrupts = <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH 0>;
 		};
 
+		cmu_hsi0: clock-controller@11000000 {
+			compatible = "google,gs201-cmu-hsi0";
+			reg = <0x11000000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>,
+				 <&cmu_top CLK_DOUT_CMU_HSI0_NOC>,
+				 <&cmu_top CLK_DOUT_CMU_HSI0_DPGTC>,
+				 <&cmu_top CLK_DOUT_CMU_HSI0_USB31DRD>,
+				 <&cmu_top CLK_DOUT_CMU_HSI0_USBDPDBG>;
+			clock-names = "oscclk", "bus", "dpgtc", "usb31drd",
+				      "usbdpdbg";
+		};
+
 		pinctrl_hsi1: pinctrl@11840000 {
 			compatible = "google,gs201-pinctrl";
 			reg = <0x11840000 0x00001000>;
 			interrupts = <GIC_SPI 387 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		cmu_hsi2: clock-controller@14400000 {
+			compatible = "google,gs201-cmu-hsi2";
+			reg = <0x14400000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>,
+				 <&cmu_top CLK_DOUT_CMU_HSI2_NOC>,
+				 <&cmu_top CLK_DOUT_CMU_HSI2_PCIE>,
+				 <&cmu_top CLK_DOUT_CMU_HSI2_UFS_EMBD>,
+				 <&cmu_top CLK_DOUT_CMU_HSI2_MMC_CARD>;
+			clock-names = "oscclk", "bus", "pcie", "ufs", "mmc";
 		};
 
 		pinctrl_hsi2: pinctrl@14440000 {
@@ -334,6 +395,14 @@
 			reg = <0x17a80000 0x00001000>;
 
 			status = "disabled";
+		};
+
+		cmu_apm: clock-controller@18000000 {
+			compatible = "google,gs201-cmu-apm";
+			reg = <0x18000000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>;
+			clock-names = "oscclk";
 		};
 
 		pmu_system_controller: system-controller@18060000 {
@@ -370,6 +439,14 @@
 					     "samsung,exynos850-wakeup-eint",
 					     "samsung,exynos7-wakeup-eint";
 			};
+		};
+
+		cmu_top: clock-controller@1e080000 {
+			compatible = "google,gs201-cmu-top";
+			reg = <0x1e080000 0x10000>;
+			#clock-cells = <1>;
+			clocks = <&ext_24_5m>;
+			clock-names = "oscclk";
 		};
 	};
 
