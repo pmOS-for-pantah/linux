@@ -56,6 +56,16 @@
 	};
 };
 
+&acpm_ipc {
+	pmic-1 {
+		compatible = "samsung,s2mpg12-pmic";
+		interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH 0>;
+
+		regulators {
+		};
+	};
+};
+
 &ext_24_5m {
 	clock-frequency = <24576000>;
 };

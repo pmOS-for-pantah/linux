@@ -265,6 +265,15 @@
 		};
 	};
 
+	firmware {
+		acpm_ipc: power-management {
+			compatible = "google,gs201-acpm-ipc";
+			#clock-cells = <1>;
+			mboxes = <&ap2apm_mailbox>;
+			shmem = <&apm_sram>;
+		};
+	};
+
 	ext_24_5m: clock-1 {
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
@@ -597,6 +606,7 @@
 			compatible = "google,gs201-pmu", "google,gs101-pmu";
 			reg = <0x18060000 0x10000>;
 			google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
+
 		};
 
 		pmu_intr_gen: syscon@18070000 {
@@ -631,6 +641,23 @@
 					     "samsung,exynos850-wakeup-eint",
 					     "samsung,exynos7-wakeup-eint";
 			};
+		};
+
+		ap2apm_mailbox: mailbox@18210000 {
+			compatible = "google,gs201-mbox", "google,gs101-mbox";
+			reg = <0x18210000 0x1000>;
+			clocks = <&cmu_apm CLK_GOUT_APM_MAILBOX_APM_AP_PCLK>;
+			clock-names = "pclk";
+			interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH 0>;
+			#mbox-cells = <0>;
+		};
+
+		apm_sram: sram@18500000 {
+			compatible = "mmio-sram";
+			reg = <0x18500000 0x48000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x18500000 0x48000>;
 		};
 
 		cmu_top: clock-controller@1e080000 {
