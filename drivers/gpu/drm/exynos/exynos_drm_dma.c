@@ -103,6 +103,10 @@ int exynos_drm_register_dma(struct drm_device *drm, struct device *dev,
 	if (!IS_ENABLED(CONFIG_EXYNOS_IOMMU))
 		return 0;
 
+	/* Without an IOMMU in front of the device, use contiguous buffers */
+	if (!priv->mapping && !device_iommu_mapped(dev))
+		return 0;
+
 	if (!priv->mapping) {
 		void *mapping = NULL;
 
