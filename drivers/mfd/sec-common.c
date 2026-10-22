@@ -50,6 +50,10 @@ static const struct mfd_cell s2mpg10_devs[] = {
 	MFD_CELL_OF("s2mpg10-gpio", NULL, NULL, 0, 0, "samsung,s2mpg10-gpio"),
 };
 
+static const struct mfd_cell s2mpg12_devs[] = {
+	MFD_CELL_NAME("s2mpg12-regulator"),
+};
+
 static const struct mfd_cell s2mpg11_devs[] = {
 	MFD_CELL_NAME("s2mpg11-meter"),
 	MFD_CELL_NAME("s2mpg11-regulator"),
@@ -125,6 +129,7 @@ static void sec_pmic_dump_rev(struct sec_pmic_dev *sec_pmic)
 	switch (sec_pmic->device_type) {
 	case S2MPG10:
 	case S2MPG11:
+	case S2MPG12:
 		/* For s2mpg1x, the revision is in a different regmap */
 		return;
 	case S2MU005:
@@ -246,6 +251,10 @@ int sec_pmic_probe(struct device *dev, int device_type, unsigned int irq,
 	case S2MPG11:
 		sec_devs = s2mpg11_devs;
 		num_sec_devs = ARRAY_SIZE(s2mpg11_devs);
+		break;
+	case S2MPG12:
+		sec_devs = s2mpg12_devs;
+		num_sec_devs = ARRAY_SIZE(s2mpg12_devs);
 		break;
 	case S2MPS11X:
 		sec_devs = s2mps11_devs;

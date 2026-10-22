@@ -14,6 +14,7 @@
 #include <linux/mfd/samsung/rtc.h>
 #include <linux/mfd/samsung/s2mpg10.h>
 #include <linux/mfd/samsung/s2mpg11.h>
+#include <linux/mfd/samsung/s2mpg12.h>
 #include <linux/module.h>
 #include <linux/of.h>
 #include <linux/platform_device.h>
@@ -365,6 +366,34 @@ static const struct regmap_config s2mpg11_regmap_config_meter = {
 	.cache_type = REGCACHE_FLAT,
 };
 
+/*
+ * S2MPG12 register access is uncached for now. The regulator driver is the
+ * only user, and it reads back the state the bootloader left behind.
+ */
+static const struct regmap_config s2mpg12_regmap_config_common = {
+	.name = "common",
+	.reg_bits = ACPM_ADDR_BITS,
+	.val_bits = 8,
+	.max_register = 0xff,
+	.cache_type = REGCACHE_NONE,
+};
+
+static const struct regmap_config s2mpg12_regmap_config_pmic = {
+	.name = "pmic",
+	.reg_bits = ACPM_ADDR_BITS,
+	.val_bits = 8,
+	.max_register = 0xff,
+	.cache_type = REGCACHE_NONE,
+};
+
+static const struct regmap_config s2mpg12_regmap_config_meter = {
+	.name = "meter",
+	.reg_bits = ACPM_ADDR_BITS,
+	.val_bits = 8,
+	.max_register = 0xff,
+	.cache_type = REGCACHE_NONE,
+};
+
 struct sec_pmic_acpm_shared_bus_context {
 	struct acpm_handle *acpm;
 	unsigned int acpm_chan_id;
@@ -559,9 +588,19 @@ static const struct sec_pmic_acpm_platform_data s2mpg11_data = {
 	.regmap_cfg_meter = &s2mpg11_regmap_config_meter,
 };
 
+static const struct sec_pmic_acpm_platform_data s2mpg12_data = {
+	.device_type = S2MPG12,
+	.acpm_chan_id = 2,
+	.speedy_channel = 0,
+	.regmap_cfg_common = &s2mpg12_regmap_config_common,
+	.regmap_cfg_pmic = &s2mpg12_regmap_config_pmic,
+	.regmap_cfg_meter = &s2mpg12_regmap_config_meter,
+};
+
 static const struct of_device_id sec_pmic_acpm_of_match[] = {
 	{ .compatible = "samsung,s2mpg10-pmic", .data = &s2mpg10_data, },
 	{ .compatible = "samsung,s2mpg11-pmic", .data = &s2mpg11_data, },
+	{ .compatible = "samsung,s2mpg12-pmic", .data = &s2mpg12_data, },
 	{ },
 };
 MODULE_DEVICE_TABLE(of, sec_pmic_acpm_of_match);
