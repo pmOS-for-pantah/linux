@@ -4,6 +4,7 @@
 #include <linux/clk.h>
 #include <linux/devfreq.h>
 #include <linux/devfreq_cooling.h>
+#include <linux/of.h>
 #include <linux/platform_device.h>
 #include <linux/pm_opp.h>
 
@@ -164,11 +165,18 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
 	 */
 	table = dev_pm_opp_get_opp_table(dev);
 	if (IS_ERR_OR_NULL(table)) {
-		ret = devm_pm_opp_set_regulators(dev, reg_names);
-		if (ret && ret != -ENODEV) {
-			if (ret != -EPROBE_DEFER)
-				DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
-			return ret;
+		/*
+		 * Some SoCs scale the GPU voltage in firmware and have no
+		 * mali-supply. Asking the OPP core for it anyway only gets
+		 * an error printed for every probe.
+		 */
+		if (of_property_present(dev->of_node, "mali-supply")) {
+			ret = devm_pm_opp_set_regulators(dev, reg_names);
+			if (ret && ret != -ENODEV) {
+				if (ret != -EPROBE_DEFER)
+					DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n");
+				return ret;
+			}
 		}
 
 		ret = devm_pm_opp_of_add_table(dev);
