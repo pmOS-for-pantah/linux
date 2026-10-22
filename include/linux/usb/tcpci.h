@@ -19,6 +19,7 @@
 #define TCPC_PD_INT_REV			0xa
 
 #define TCPC_ALERT			0x10
+#define TCPC_ALERT_VENDOR		BIT(15)
 #define TCPC_ALERT_EXTND		BIT(14)
 #define TCPC_ALERT_EXTENDED_STATUS	BIT(13)
 #define TCPC_ALERT_VBUS_DISCNCT		BIT(11)
@@ -208,6 +209,11 @@ struct tcpci;
  * @set_orientation:
  *		Optional; Enable setting the connector orientation
  *		CONFIG_STANDARD_OUTPUT (0x18) bit0.
+ * @get_current_limit:
+ *		Optional; Return the input current limit in mA that the TCPC
+ *		detected for a cc=Rp-def source, for example through BC1.2,
+ *		or 0 when it knows none. Call tcpm_current_limit_change()
+ *		when the result changes.
  */
 struct tcpci_data {
 	struct regmap *regmap;
@@ -228,6 +234,7 @@ struct tcpci_data {
 					     bool capable);
 	void (*check_contaminant)(struct tcpci *tcpci, struct tcpci_data *data);
 	bool (*attempt_vconn_swap_discovery)(struct tcpci *tcpci, struct tcpci_data *data);
+	int (*get_current_limit)(struct tcpci *tcpci, struct tcpci_data *data);
 };
 
 struct tcpci *tcpci_register_port(struct device *dev, struct tcpci_data *data);
