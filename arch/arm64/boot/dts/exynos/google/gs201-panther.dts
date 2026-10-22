@@ -29,7 +29,7 @@
 
 	gpio-keys {
 		compatible = "gpio-keys";
-		pinctrl-0 = <&key_voldown>, <&key_volup>;
+		pinctrl-0 = <&key_voldown>, <&key_volup>, <&key_power>;
 		pinctrl-names = "default";
 
 		button-vol-down {
@@ -43,6 +43,13 @@
 			label = "KEY_VOLUMEUP";
 			linux,code = <KEY_VOLUMEUP>;
 			gpios = <&gpa8 5 GPIO_ACTIVE_LOW>;
+			wakeup-source;
+		};
+
+		button-power {
+			label = "KEY_POWER";
+			linux,code = <KEY_POWER>;
+			gpios = <&gpa10 0 GPIO_ACTIVE_LOW>;
 			wakeup-source;
 		};
 	};
@@ -113,6 +120,13 @@
 };
 
 &pinctrl_gpio_alive {
+	key_power: key-power-pins {
+		samsung,pins = "gpa10-0";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
+
 	key_voldown: key-voldown-pins {
 		samsung,pins = "gpa10-1";
 		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
