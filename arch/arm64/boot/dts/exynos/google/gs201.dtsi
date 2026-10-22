@@ -1036,6 +1036,25 @@
 			ranges = <0x0 0x18500000 0x48000>;
 		};
 
+		decon: display-controller@1c240000 {
+			compatible = "google,gs201-decon";
+			reg = <0x1c240000 0x1000>, <0x1c0b0000 0x6000>;
+			reg-names = "decon", "dma";
+			interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH 0>;
+			interrupt-names = "frame-done";
+
+			status = "disabled";
+		};
+
+		dsim: dsi@1c2c0000 {
+			compatible = "google,gs201-dsim";
+			reg = <0x1c2c0000 0x300>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			status = "disabled";
+		};
+
 		cmu_top: clock-controller@1e080000 {
 			compatible = "google,gs201-cmu-top";
 			reg = <0x1e080000 0x10000>;
