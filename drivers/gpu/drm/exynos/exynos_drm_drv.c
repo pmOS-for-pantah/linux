@@ -7,6 +7,7 @@
  *	Seung-Woo Kim <sw0312.kim@samsung.com>
  */
 
+#include <linux/aperture.h>
 #include <linux/component.h>
 #include <linux/dma-mapping.h>
 #include <linux/platform_device.h>
@@ -168,6 +169,9 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
 		DRV_PTR(decon_driver, CONFIG_DRM_EXYNOS7_DECON),
 		DRM_COMPONENT_DRIVER
 	}, {
+		DRV_PTR(gs201_decon_driver, CONFIG_DRM_EXYNOS_GS201_DECON),
+		DRM_COMPONENT_DRIVER
+	}, {
 		DRV_PTR(mixer_driver, CONFIG_DRM_EXYNOS_MIXER),
 		DRM_COMPONENT_DRIVER
 	}, {
@@ -175,6 +179,9 @@ static struct exynos_drm_driver_info exynos_drm_drivers[] = {
 		DRM_COMPONENT_DRIVER
 	}, {
 		DRV_PTR(dsi_driver, CONFIG_DRM_EXYNOS_DSI),
+		DRM_COMPONENT_DRIVER
+	}, {
+		DRV_PTR(gs201_dsim_driver, CONFIG_DRM_EXYNOS_GS201_DSIM),
 		DRM_COMPONENT_DRIVER
 	}, {
 		DRV_PTR(mic_driver, CONFIG_DRM_EXYNOS_MIC),
@@ -239,6 +246,11 @@ static int exynos_drm_bind(struct device *dev)
 	struct drm_device *drm;
 	unsigned int clone_mask;
 	int ret;
+
+	/* Take the display over from a firmware framebuffer driver */
+	ret = aperture_remove_all_conflicting_devices(exynos_drm_driver.name);
+	if (ret)
+		return ret;
 
 	drm = drm_dev_alloc(&exynos_drm_driver, dev);
 	if (IS_ERR(drm))
