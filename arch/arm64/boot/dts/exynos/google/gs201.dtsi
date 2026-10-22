@@ -6,7 +6,7 @@
  * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
  */
 
-#include <dt-bindings/clock/google,gs101-acpm.h>
+#include <dt-bindings/clock/google,gs201-acpm.h>
 #include <dt-bindings/clock/google,gs201.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
@@ -276,15 +276,59 @@
 	};
 
 	/*
-	 * The ACPM firmware sets the GPU clocks and their voltages. Only the
-	 * boot level of the shader domain is listed until the G3D and G3DL2
-	 * domains can be scaled together.
+	 * GPU operating points as shader clock rates. The ACPM "gpu" clock moves
+	 * the L2 domain along with the shaders, and the firmware sets the
+	 * voltages.
 	 */
 	gpu_opp_table: opp-table-gpu {
 		compatible = "operating-points-v2";
 
 		opp-151000000 {
 			opp-hz = /bits/ 64 <151000000>;
+		};
+
+		opp-202000000 {
+			opp-hz = /bits/ 64 <202000000>;
+		};
+
+		opp-251000000 {
+			opp-hz = /bits/ 64 <251000000>;
+		};
+
+		opp-302000000 {
+			opp-hz = /bits/ 64 <302000000>;
+		};
+
+		opp-351000000 {
+			opp-hz = /bits/ 64 <351000000>;
+		};
+
+		opp-400000000 {
+			opp-hz = /bits/ 64 <400000000>;
+		};
+
+		opp-471000000 {
+			opp-hz = /bits/ 64 <471000000>;
+		};
+
+		opp-510000000 {
+			opp-hz = /bits/ 64 <510000000>;
+		};
+
+		opp-572000000 {
+			opp-hz = /bits/ 64 <572000000>;
+		};
+
+		opp-701000000 {
+			opp-hz = /bits/ 64 <701000000>;
+		};
+
+		opp-762000000 {
+			opp-hz = /bits/ 64 <762000000>;
+		};
+
+		opp-848000000 {
+			opp-hz = /bits/ 64 <848000000>;
 		};
 	};
 
@@ -749,7 +793,7 @@
 				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH 0>,
 				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH 0>;
 			interrupt-names = "job", "mmu", "gpu";
-			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_G3D>;
+			clocks = <&acpm_ipc GS201_CLK_ACPM_GPU>;
 			clock-names = "core";
 			operating-points-v2 = <&gpu_opp_table>;
 
