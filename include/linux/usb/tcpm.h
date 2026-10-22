@@ -180,6 +180,7 @@ void tcpm_unregister_port(struct tcpm_port *port);
 void tcpm_vbus_change(struct tcpm_port *port);
 void tcpm_cc_change(struct tcpm_port *port);
 void tcpm_sink_frs(struct tcpm_port *port);
+void tcpm_current_limit_change(struct tcpm_port *port);
 void tcpm_sourcing_vbus(struct tcpm_port *port);
 void tcpm_pd_receive(struct tcpm_port *port,
 		     const struct pd_message *msg,

@@ -285,6 +285,7 @@ enum frs_typec_current {
 #define TCPM_SOURCING_VBUS	BIT(4)
 #define TCPM_PORT_CLEAN		BIT(5)
 #define TCPM_PORT_ERROR		BIT(6)
+#define TCPM_CURRENT_LIMIT_EVENT	BIT(7)
 
 #define LOG_BUFFER_ENTRIES	1024
 #define LOG_BUFFER_ENTRY_SIZE	128
@@ -7160,12 +7161,40 @@ static void tcpm_pd_event_handler(struct kthread_work *work)
 			tcpm_log(port, "port triggering error recovery");
 			tcpm_set_state(port, ERROR_RECOVERY, 0);
 		}
+		if (events & TCPM_CURRENT_LIMIT_EVENT) {
+			/*
+			 * Without a contract the limit comes from Rp and the
+			 * TCPC's charger detection, which can finish well after
+			 * the sink first sampled it.
+			 */
+			if (port->attached && port->pwr_role == TYPEC_SINK &&
+			    port->vbus_present && !port->explicit_contract)
+				tcpm_set_current_limit(port,
+						       tcpm_get_current_limit(port),
+						       5000);
+		}
 
 		spin_lock(&port->pd_event_lock);
 	}
 	spin_unlock(&port->pd_event_lock);
 	mutex_unlock(&port->lock);
 }
+
+/**
+ * tcpm_current_limit_change - Report a new input current limit
+ * @port: tcpm port
+ *
+ * Called by TCPC drivers whose get_current_limit() result changed, for
+ * example when BC1.2 detection completes after the port is attached.
+ */
+void tcpm_current_limit_change(struct tcpm_port *port)
+{
+	spin_lock(&port->pd_event_lock);
+	port->pd_events |= TCPM_CURRENT_LIMIT_EVENT;
+	spin_unlock(&port->pd_event_lock);
+	kthread_queue_work(port->wq, &port->event_work);
+}
+EXPORT_SYMBOL_GPL(tcpm_current_limit_change);
 
 void tcpm_cc_change(struct tcpm_port *port)
 {
