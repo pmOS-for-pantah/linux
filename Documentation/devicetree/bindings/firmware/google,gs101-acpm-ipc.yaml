@@ -22,7 +22,9 @@ description: |
 
 properties:
   compatible:
-    const: google,gs101-acpm-ipc
+    enum:
+      - google,gs101-acpm-ipc
+      - google,gs201-acpm-ipc
 
   "#clock-cells":
     const: 1
@@ -53,7 +55,9 @@ properties:
 
     properties:
       compatible:
-        const: samsung,s2mpg10-pmic
+        enum:
+          - samsung,s2mpg10-pmic
+          - samsung,s2mpg12-pmic
 
   pmic-2:
     description: Child node describing the sub PMIC.
