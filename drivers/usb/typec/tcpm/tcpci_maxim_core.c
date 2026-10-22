@@ -6,6 +6,7 @@
  */
 
 #include <linux/interrupt.h>
+#include <linux/bitfield.h>
 #include <linux/i2c.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
@@ -21,6 +22,13 @@
 #define PD_ACTIVITY_TIMEOUT_MS				10000
 
 #define TCPC_VENDOR_ALERT				0x80
+#define TCPC_VENDOR_ALERT_CHGTYPINT			BIT(0)
+#define TCPC_VENDOR_ALERT_MASK				0x82
+#define TCPC_VENDOR_BC_STATUS1				0x87
+#define TCPC_VENDOR_BC_STATUS1_CHGTYP			GENMASK(1, 0)
+#define TCPC_VENDOR_BC_STATUS1_CHGTYP_SDP		1
+#define TCPC_VENDOR_BC_STATUS1_CHGTYP_CDP		2
+#define TCPC_VENDOR_BC_STATUS1_CHGTYP_DCP		3
 #define TCPC_VENDOR_USBSW_CTRL				0x93
 #define TCPC_VENDOR_USBSW_CTRL_ENABLE_USB_DATA		0x9
 #define TCPC_VENDOR_USBSW_CTRL_DISABLE_USB_DATA		0
@@ -74,6 +82,13 @@ static void max_tcpci_init_regs(struct max_tcpci_chip *chip)
 		return;
 	}
 
+	/* Report when BC1.2 charger detection has a result */
+	ret = max_tcpci_write16(chip, TCPC_VENDOR_ALERT_MASK, TCPC_VENDOR_ALERT_CHGTYPINT);
+	if (ret < 0) {
+		dev_err(chip->dev, "Error writing to TCPC_VENDOR_ALERT_MASK ret:%d\n", ret);
+		return;
+	}
+
 	ret = max_tcpci_write8(chip, TCPC_ALERT_EXTENDED, 0xff);
 	if (ret < 0) {
 		dev_err(chip->dev, "Unable to clear TCPC_ALERT_EXTENDED ret:%d\n", ret);
@@ -98,7 +113,7 @@ static void max_tcpci_init_regs(struct max_tcpci_chip *chip)
 		      TCPC_ALERT_CC_STATUS |
 		      TCPC_ALERT_EXTND | TCPC_ALERT_EXTENDED_STATUS |
 		      TCPC_ALERT_VBUS_DISCNCT | TCPC_ALERT_RX_BUF_OVF |
-		      TCPC_ALERT_FAULT);
+		      TCPC_ALERT_FAULT | TCPC_ALERT_VENDOR);
 
 	ret = max_tcpci_write16(chip, TCPC_ALERT_MASK, alert_mask);
 	if (ret < 0) {
@@ -307,6 +322,25 @@ static void max_tcpci_set_partner_usb_comm_capable(struct tcpci *tcpci, struct t
 		dev_err(chip->dev, "Failed to enable USB switches");
 }
 
+static int max_tcpci_get_current_limit(struct tcpci *tcpci, struct tcpci_data *tdata)
+{
+	struct max_tcpci_chip *chip = tdata_to_max_tcpci(tdata);
+	u8 bc_status;
+
+	if (max_tcpci_read8(chip, TCPC_VENDOR_BC_STATUS1, &bc_status) < 0)
+		return 0;
+
+	switch (FIELD_GET(TCPC_VENDOR_BC_STATUS1_CHGTYP, bc_status)) {
+	case TCPC_VENDOR_BC_STATUS1_CHGTYP_SDP:
+		return 500;
+	case TCPC_VENDOR_BC_STATUS1_CHGTYP_CDP:
+	case TCPC_VENDOR_BC_STATUS1_CHGTYP_DCP:
+		return 1500;
+	default:
+		return 0;
+	}
+}
+
 static irqreturn_t _max_tcpci_irq(struct max_tcpci_chip *chip, u16 status)
 {
 	u16 mask;
@@ -370,6 +404,21 @@ static irqreturn_t _max_tcpci_irq(struct max_tcpci_chip *chip, u16 status)
 		ret = max_tcpci_read8(chip, TCPC_EXTENDED_STATUS, (u8 *)&reg_status);
 		if (ret >= 0 && (reg_status & TCPC_EXTENDED_STATUS_VSAFE0V))
 			tcpm_vbus_change(chip->port);
+	}
+
+	if (status & TCPC_ALERT_VENDOR) {
+		u16 vendor_status;
+
+		ret = max_tcpci_read16(chip, TCPC_VENDOR_ALERT, &vendor_status);
+		if (ret < 0)
+			return ret;
+
+		ret = max_tcpci_write16(chip, TCPC_VENDOR_ALERT, vendor_status);
+		if (ret < 0)
+			return ret;
+
+		if (vendor_status & TCPC_VENDOR_ALERT_CHGTYPINT)
+			tcpm_current_limit_change(chip->port);
 	}
 
 	if (status & TCPC_ALERT_RX_STATUS)
@@ -523,6 +572,7 @@ static int max_tcpci_probe(struct i2c_client *client)
 	chip->data.check_contaminant = max_tcpci_check_contaminant;
 	chip->data.cable_comm_capable = true;
 	chip->data.attempt_vconn_swap_discovery = max_tcpci_attempt_vconn_swap_discovery;
+	chip->data.get_current_limit = max_tcpci_get_current_limit;
 
 	max_tcpci_init_regs(chip);
 	chip->tcpci = tcpci_register_port(chip->dev, &chip->data);
