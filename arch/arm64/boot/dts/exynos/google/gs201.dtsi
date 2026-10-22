@@ -6,6 +6,7 @@
  * Copyright 2023 Linaro Ltd - <peter.griffin@linaro.org>
  */
 
+#include <dt-bindings/clock/google,gs101-acpm.h>
 #include <dt-bindings/clock/google,gs201.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
@@ -271,6 +272,19 @@
 			#clock-cells = <1>;
 			mboxes = <&ap2apm_mailbox>;
 			shmem = <&apm_sram>;
+		};
+	};
+
+	/*
+	 * The ACPM firmware sets the GPU clocks and their voltages. Only the
+	 * boot level of the shader domain is listed until the G3D and G3DL2
+	 * domains can be scaled together.
+	 */
+	gpu_opp_table: opp-table-gpu {
+		compatible = "operating-points-v2";
+
+		opp-151000000 {
+			opp-hz = /bits/ 64 <151000000>;
 		};
 	};
 
@@ -691,6 +705,25 @@
 			#clock-cells = <1>;
 			clocks = <&ext_24_5m>;
 			clock-names = "oscclk";
+		};
+
+		/*
+		 * The bootloader leaves the G3D power domains on. Switching them
+		 * needs secure PMU accesses that the Exynos power domain driver
+		 * does not make yet.
+		 */
+		gpu: gpu@28000000 {
+			compatible = "google,gs201-mali", "arm,mali-valhall-csf";
+			reg = <0x28000000 0x480000>;
+			interrupts = <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH 0>,
+				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH 0>,
+				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH 0>;
+			interrupt-names = "job", "mmu", "gpu";
+			clocks = <&acpm_ipc GS101_CLK_ACPM_DVFS_G3D>;
+			clock-names = "core";
+			operating-points-v2 = <&gpu_opp_table>;
+
+			status = "disabled";
 		};
 	};
 
