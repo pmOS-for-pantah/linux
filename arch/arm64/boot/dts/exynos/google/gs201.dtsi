@@ -384,12 +384,47 @@
 			clock-names = "oscclk", "bus", "ip";
 		};
 
+		sysreg_peric1: syscon@10c20000 {
+			compatible = "google,gs201-peric1-sysreg", "syscon";
+			reg = <0x10c20000 0x10000>;
+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_SYSREG_PERIC1_PCLK>;
+		};
+
 		pinctrl_peric1: pinctrl@10c40000 {
 			compatible = "google,gs201-pinctrl";
 			reg = <0x10c40000 0x00001000>;
 			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_GPIO_PERIC1_PCLK>;
 			clock-names = "pclk";
 			interrupts = <GIC_SPI 683 IRQ_TYPE_LEVEL_HIGH 0>;
+		};
+
+		usi0: usi@10d100c0 {
+			compatible = "google,gs201-usi", "samsung,exynos850-usi";
+			reg = <0x10d100c0 0x20>;
+			ranges;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_USI0_USI_PCLK>,
+				 <&cmu_peric1 CLK_GOUT_PERIC1_USI0_USI_IPCLK>;
+			clock-names = "pclk", "ipclk";
+			samsung,sysreg = <&sysreg_peric1 0x1000>;
+
+			status = "disabled";
+
+			spi_0: spi@10d10000 {
+				compatible = "google,gs201-spi", "google,gs101-spi";
+				reg = <0x10d10000 0x30>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_USI0_USI_PCLK>,
+					 <&cmu_peric1 CLK_GOUT_PERIC1_USI0_USI_IPCLK>;
+				clock-names = "spi", "spi_busclk0";
+				interrupts = <GIC_SPI 690 IRQ_TYPE_LEVEL_HIGH 0>;
+				pinctrl-0 = <&spi0_bus>;
+				pinctrl-names = "default";
+
+				status = "disabled";
+			};
 		};
 
 		cmu_hsi0: clock-controller@11000000 {
