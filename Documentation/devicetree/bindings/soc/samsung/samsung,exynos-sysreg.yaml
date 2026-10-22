@@ -22,6 +22,7 @@ properties:
               - google,gs101-peric0-sysreg
               - google,gs101-peric1-sysreg
               - google,gs201-hsi2-sysreg
+              - google,gs201-peric1-sysreg
               - samsung,exynos2200-cmgp-sysreg
               - samsung,exynos2200-peric0-sysreg
               - samsung,exynos2200-peric1-sysreg
@@ -102,6 +103,7 @@ allOf:
               - google,gs101-peric0-sysreg
               - google,gs101-peric1-sysreg
               - google,gs201-hsi2-sysreg
+              - google,gs201-peric1-sysreg
               - samsung,exynos850-cmgp-sysreg
               - samsung,exynos850-peri-sysreg
               - samsung,exynos850-sysreg
