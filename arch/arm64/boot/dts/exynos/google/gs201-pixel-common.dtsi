@@ -92,9 +92,8 @@
 };
 
 /*
- * TODO: Switch to OTG with role and orientation switching once the
- * MAX77759 Type-C port controller is described. Until then the PHY forces
- * VBUS valid, so run as a USB 2.0 peripheral.
+ * Without a Type-C port controller the PHY forces VBUS valid, so run as a
+ * USB 2.0 peripheral. Boards that describe theirs switch to OTG.
  */
 &usbdrd31_dwc3 {
 	dr_mode = "peripheral";
