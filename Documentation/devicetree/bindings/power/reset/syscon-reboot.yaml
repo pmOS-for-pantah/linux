@@ -21,9 +21,13 @@ description: |+
 
 properties:
   compatible:
-    enum:
-      - syscon-reboot
-      - google,gs101-reboot
+    oneOf:
+      - enum:
+          - syscon-reboot
+          - google,gs101-reboot
+      - items:
+          - const: google,gs201-reboot
+          - const: google,gs101-reboot
 
   mask:
     $ref: /schemas/types.yaml#/definitions/uint32
