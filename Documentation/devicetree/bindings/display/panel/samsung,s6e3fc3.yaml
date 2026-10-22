@@ -1,0 +1,69 @@
+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/display/panel/samsung,s6e3fc3.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Samsung S6E3FC3 AMOLED DDIC
+
+maintainers:
+  - sidharthify <wednisegit@gmail.com>
+
+description:
+  The S6E3FC3 is a display driver IC with a connected AMOLED panel,
+  driven over MIPI DSI in command mode with DSC compression.
+
+allOf:
+  - $ref: panel-common.yaml#
+
+properties:
+  compatible:
+    items:
+      - enum:
+            # Samsung 6.3 inch, 1080x2400 pixels, Google Pixel 7
+          - samsung,s6e3fc3-p10
+      - const: samsung,s6e3fc3
+
+  reg:
+    maxItems: 1
+
+  vci-supply:
+    description: VCI regulator
+
+  vddi-supply:
+    description: VDDI regulator
+
+required:
+  - compatible
+  - reg
+  - reset-gpios
+  - vci-supply
+  - vddi-supply
+
+unevaluatedProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/gpio/gpio.h>
+
+    dsi {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        panel@0 {
+            compatible = "samsung,s6e3fc3-p10", "samsung,s6e3fc3";
+            reg = <0>;
+
+            reset-gpios = <&gpa7 1 GPIO_ACTIVE_LOW>;
+            vci-supply = <&ldo27m>;
+            vddi-supply = <&bucka_s>;
+
+            port {
+                panel_in: endpoint {
+                    remote-endpoint = <&dsi_out>;
+                };
+            };
+        };
+    };
+
+...
