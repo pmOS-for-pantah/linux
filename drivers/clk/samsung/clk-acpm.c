@@ -155,6 +155,8 @@ static int acpm_clk_probe(struct platform_device *pdev)
 
 static const struct platform_device_id acpm_clk_id[] = {
 	{ .name = "gs101-acpm-clk" },
+	/* gs201 has the same DVFS domains, in the same order */
+	{ .name = "gs201-acpm-clk" },
 	{ }
 };
 MODULE_DEVICE_TABLE(platform, acpm_clk_id);
