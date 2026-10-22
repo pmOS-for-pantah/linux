@@ -248,6 +248,8 @@ static inline int exynos_drm_check_fimc_device(struct device *dev)
 
 extern struct platform_driver fimd_driver;
 extern struct platform_driver exynos5433_decon_driver;
+extern struct platform_driver gs201_decon_driver;
+extern struct platform_driver gs201_dsim_driver;
 extern struct platform_driver decon_driver;
 extern struct platform_driver dp_driver;
 extern struct platform_driver dsi_driver;

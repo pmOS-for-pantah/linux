@@ -36,6 +36,15 @@ config DRM_EXYNOS7_DECON
 	help
 	  Choose this option if you want to use Exynos DECON for DRM.
 
+config DRM_EXYNOS_GS201_DECON
+	bool "DECON on Google gs201"
+	depends on ARCH_EXYNOS || COMPILE_TEST
+	help
+	  Choose this option if you want to use the DECON display
+	  controller of Google gs201 SoCs, found in the Pixel 7 and
+	  Pixel 7 Pro. It scans out framebuffers through the DPP DMA
+	  channels and feeds the DSI host.
+
 config DRM_EXYNOS_MIXER
 	bool "Mixer"
 	help
@@ -65,6 +74,20 @@ config DRM_EXYNOS_DSI
 	default n
 	help
 	  This enables support for Exynos MIPI-DSI device.
+
+config DRM_EXYNOS_GS201_DSIM
+	bool "MIPI-DSI host on Google gs201"
+	depends on DRM_EXYNOS_GS201_DECON
+	select DRM_BRIDGE_CONNECTOR
+	select DRM_DISPLAY_HELPER
+	select DRM_MIPI_DSI
+	select DRM_PANEL
+	select DRM_PANEL_BRIDGE
+	help
+	  This enables support for the MIPI-DSI host (DSIM) of Google
+	  gs201 SoCs. It sends the DECON output and the panel commands
+	  to a DSI panel such as the one in the Pixel 7. Say Y if you
+	  enable the gs201 DECON.
 
 config DRM_EXYNOS_DP
 	bool "Exynos specific extensions for Analogix DP driver"
