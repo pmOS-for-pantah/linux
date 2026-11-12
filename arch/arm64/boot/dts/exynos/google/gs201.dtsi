@@ -9,6 +9,7 @@
 #include <dt-bindings/clock/google,gs201-acpm.h>
 #include <dt-bindings/clock/google,gs201.h>
 #include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/thermal/thermal.h>
 
 / {
 	compatible = "google,gs201";
@@ -81,6 +82,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&ananke_cpu_sleep>;
 			capacity-dmips-mhz = <250>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl0_opp_table>;
 		};
 
@@ -92,6 +94,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&ananke_cpu_sleep>;
 			capacity-dmips-mhz = <250>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl0_opp_table>;
 		};
 
@@ -103,6 +106,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&ananke_cpu_sleep>;
 			capacity-dmips-mhz = <250>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl0_opp_table>;
 		};
 
@@ -114,6 +118,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&ananke_cpu_sleep>;
 			capacity-dmips-mhz = <250>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl0_opp_table>;
 		};
 
@@ -125,6 +130,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&hercules_cpu_sleep>;
 			capacity-dmips-mhz = <927>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl1_opp_table>;
 		};
 
@@ -136,6 +142,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&hercules_cpu_sleep>;
 			capacity-dmips-mhz = <927>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl1_opp_table>;
 		};
 
@@ -147,6 +154,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&hera_cpu_sleep>;
 			capacity-dmips-mhz = <1024>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl2_opp_table>;
 		};
 
@@ -158,6 +166,7 @@
 			enable-method = "psci";
 			cpu-idle-states = <&hera_cpu_sleep>;
 			capacity-dmips-mhz = <1024>;
+			#cooling-cells = <2>;
 			operating-points-v2 = <&cpucl2_opp_table>;
 		};
 
@@ -662,6 +671,15 @@
 			status = "disabled";
 		};
 
+		tmu_top: thermal-sensor@100a0000 {
+			compatible = "google,gs201-tmu-top";
+			reg = <0x100a0000 0x800>;
+			clocks = <&cmu_misc CLK_GOUT_MISC_TMU_TOP_PCLK>;
+			interrupts = <GIC_SPI 801 IRQ_TYPE_LEVEL_HIGH 0>;
+			#thermal-sensor-cells = <1>;
+			samsung,acpm-ipc = <&acpm_ipc>;
+		};
+
 		gic: interrupt-controller@10400000 {
 			compatible = "arm,gic-v3";
 			#address-cells = <0>;
@@ -1080,6 +1098,132 @@
 			operating-points-v2 = <&gpu_opp_table>;
 
 			status = "disabled";
+		};
+	};
+
+	thermal-zones {
+		big-thermal {
+			polling-delay-passive = <100>;
+			polling-delay = <1000>;
+			thermal-sensors = <&tmu_top 0>;
+
+			trips {
+				big_alert: big-alert {
+					temperature = <85000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				big_hot: big-hot {
+					temperature = <95000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				big-critical {
+					temperature = <115000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&big_alert>;
+					cooling-device = <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+				};
+
+				map1 {
+					trip = <&big_hot>;
+					cooling-device = <&cpu6 9 THERMAL_NO_LIMIT>,
+							 <&cpu7 9 THERMAL_NO_LIMIT>;
+				};
+			};
+		};
+
+		mid-thermal {
+			polling-delay-passive = <100>;
+			polling-delay = <1000>;
+			thermal-sensors = <&tmu_top 1>;
+
+			trips {
+				mid_alert: mid-alert {
+					temperature = <85000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				mid_hot: mid-hot {
+					temperature = <95000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				mid-critical {
+					temperature = <115000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&mid_alert>;
+					cooling-device = <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+				};
+
+				map1 {
+					trip = <&mid_hot>;
+					cooling-device = <&cpu4 6 THERMAL_NO_LIMIT>,
+							 <&cpu5 6 THERMAL_NO_LIMIT>;
+				};
+			};
+		};
+
+		little-thermal {
+			polling-delay-passive = <100>;
+			polling-delay = <1000>;
+			thermal-sensors = <&tmu_top 2>;
+
+			trips {
+				little_alert: little-alert {
+					temperature = <85000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				little_hot: little-hot {
+					temperature = <95000>;
+					hysteresis = <5000>;
+					type = "passive";
+				};
+
+				little-critical {
+					temperature = <115000>;
+					hysteresis = <0>;
+					type = "critical";
+				};
+			};
+
+			cooling-maps {
+				map0 {
+					trip = <&little_alert>;
+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+				};
+
+				map1 {
+					trip = <&little_hot>;
+					cooling-device = <&cpu0 4 THERMAL_NO_LIMIT>,
+							 <&cpu1 4 THERMAL_NO_LIMIT>,
+							 <&cpu2 4 THERMAL_NO_LIMIT>,
+							 <&cpu3 4 THERMAL_NO_LIMIT>;
+				};
+			};
 		};
 	};
 
