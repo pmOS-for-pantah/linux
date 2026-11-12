@@ -116,6 +116,12 @@
 		interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH 0>,
 			     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH 0>;
 	};
+
+	uart_apm1_bus: uart-apm1-bus-pins {
+		samsung,pins = "gpa3-0", "gpa3-1", "gpa3-2", "gpa3-3";
+		samsung,pin-function = <GS101_PIN_FUNC_2>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+	};
 };
 
 &pinctrl_far_alive {
