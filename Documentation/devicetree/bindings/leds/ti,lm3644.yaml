@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+%YAML 1.2
+---
+$id: http://devicetree.org/schemas/leds/ti,lm3644.yaml#
+$schema: http://devicetree.org/meta-schemas/core.yaml#
+
+title: Texas Instruments LM3644 dual LED flash driver
+
+maintainers:
+  - sidharthify <wednisegit@gmail.com>
+
+description: |
+  The LM3644 is a dual LED flash driver with an I2C interface. Each of its
+  two current sinks can drive up to 1.5 A in flash mode and 179 mA in torch
+  mode. Both sinks share the boost converter, mode bits and flash timer, so
+  only one LED is supported, which can use one or both sinks.
+
+  The data sheet can be found at:
+    https://www.ti.com/lit/ds/symlink/lm3644.pdf
+
+properties:
+  compatible:
+    const: ti,lm3644
+
+  reg:
+    maxItems: 1
+
+  enable-gpios:
+    maxItems: 1
+    description: GPIO connected to the HWEN pin
+
+  led:
+    type: object
+    $ref: common.yaml#
+    unevaluatedProperties: false
+
+    properties:
+      led-sources:
+        minItems: 1
+        maxItems: 2
+        items:
+          enum: [1, 2]
+
+      led-max-microamp:
+        minimum: 977
+        maximum: 179000
+
+      flash-max-microamp:
+        minimum: 10900
+        maximum: 1500000
+
+      flash-max-timeout-us:
+        minimum: 10000
+        maximum: 400000
+
+    required:
+      - led-sources
+
+required:
+  - compatible
+  - reg
+  - led
+
+additionalProperties: false
+
+examples:
+  - |
+    #include <dt-bindings/gpio/gpio.h>
+    #include <dt-bindings/leds/common.h>
+
+    i2c {
+      #address-cells = <1>;
+      #size-cells = <0>;
+
+      led-controller@63 {
+        compatible = "ti,lm3644";
+        reg = <0x63>;
+        enable-gpios = <&gpio1 2 GPIO_ACTIVE_HIGH>;
+
+        led {
+          function = LED_FUNCTION_FLASH;
+          color = <LED_COLOR_ID_WHITE>;
+          led-sources = <1>, <2>;
+          led-max-microamp = <89300>;
+          flash-max-microamp = <729000>;
+          flash-max-timeout-us = <400000>;
+        };
+      };
+    };
