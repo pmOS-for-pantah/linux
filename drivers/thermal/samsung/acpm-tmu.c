@@ -36,6 +36,16 @@
 #define GS101_CPUCL0_SENSOR_MASK (EXYNOS_TMU_SENSOR(1) |	\
 				  EXYNOS_TMU_SENSOR(2))
 
+#define GS201_CPUCL2_SENSOR_MASK (EXYNOS_TMU_SENSOR(0) |	\
+				  EXYNOS_TMU_SENSOR(7) |	\
+				  EXYNOS_TMU_SENSOR(9) |	\
+				  EXYNOS_TMU_SENSOR(10) |	\
+				  EXYNOS_TMU_SENSOR(11))
+#define GS201_CPUCL1_SENSOR_MASK (EXYNOS_TMU_SENSOR(4) |	\
+				  EXYNOS_TMU_SENSOR(6))
+#define GS201_CPUCL0_SENSOR_MASK (EXYNOS_TMU_SENSOR(1) |	\
+				  EXYNOS_TMU_SENSOR(3))
+
 #define GS101_REG_INTPEND(i)		((i) * 0x50 + 0xf8)
 
 enum {
@@ -101,6 +111,12 @@ static const struct acpm_tmu_sensor_group gs101_sensor_groups[] = {
 	ACPM_TMU_SENSOR_GROUP(GS101_CPUCL0_SENSOR_MASK, 2),
 };
 
+static const struct acpm_tmu_sensor_group gs201_sensor_groups[] = {
+	ACPM_TMU_SENSOR_GROUP(GS201_CPUCL2_SENSOR_MASK, 0),
+	ACPM_TMU_SENSOR_GROUP(GS201_CPUCL1_SENSOR_MASK, 1),
+	ACPM_TMU_SENSOR_GROUP(GS201_CPUCL0_SENSOR_MASK, 2),
+};
+
 static const struct reg_field gs101_reg_fields[REG_INTPEND_COUNT] = {
 	[P0_INTPEND] = REG_FIELD(GS101_REG_INTPEND(0), 0, 31),
 	[P1_INTPEND] = REG_FIELD(GS101_REG_INTPEND(1), 0, 31),
@@ -132,6 +148,13 @@ static const struct acpm_tmu_driver_data acpm_tmu_gs101 = {
 	.reg_fields = gs101_reg_fields,
 	.sensor_groups = gs101_sensor_groups,
 	.num_sensor_groups = ARRAY_SIZE(gs101_sensor_groups),
+	.mbox_chan_id = 9,
+};
+
+static const struct acpm_tmu_driver_data acpm_tmu_gs201 = {
+	.reg_fields = gs101_reg_fields,
+	.sensor_groups = gs201_sensor_groups,
+	.num_sensor_groups = ARRAY_SIZE(gs201_sensor_groups),
 	.mbox_chan_id = 9,
 };
 
@@ -397,6 +420,7 @@ static irqreturn_t acpm_tmu_thread_fn(int irq, void *id)
 
 static const struct of_device_id acpm_tmu_match[] = {
 	{ .compatible = "google,gs101-tmu-top", .data = &acpm_tmu_gs101 },
+	{ .compatible = "google,gs201-tmu-top", .data = &acpm_tmu_gs201 },
 	{ /* sentinel */ },
 };
 MODULE_DEVICE_TABLE(of, acpm_tmu_match);
