@@ -396,20 +396,24 @@ static irqreturn_t acpm_tmu_thread_fn(int irq, void *id)
 }
 
 static const struct of_device_id acpm_tmu_match[] = {
-	{ .compatible = "google,gs101-tmu-top" },
+	{ .compatible = "google,gs101-tmu-top", .data = &acpm_tmu_gs101 },
 	{ /* sentinel */ },
 };
 MODULE_DEVICE_TABLE(of, acpm_tmu_match);
 
 static int acpm_tmu_probe(struct platform_device *pdev)
 {
-	const struct acpm_tmu_driver_data *data = &acpm_tmu_gs101;
+	const struct acpm_tmu_driver_data *data;
 	struct acpm_handle *acpm_handle;
 	struct device *dev = &pdev->dev;
 	struct acpm_tmu_priv *priv;
 	struct regmap *regmap;
 	void __iomem *base;
 	int i, ret;
+
+	data = of_device_get_match_data(dev);
+	if (!data)
+		return -ENODEV;
 
 	acpm_handle = devm_acpm_get_by_phandle(dev);
 	if (IS_ERR(acpm_handle))
