@@ -39,6 +39,18 @@ config LEDS_LM3601X
 	  This option enables support for the TI LM3601x family
 	  of flash, torch and indicator classes.
 
+config LEDS_LM3644
+	tristate "LED support for LM3644 flash"
+	depends on LEDS_CLASS_FLASH && I2C
+	depends on GPIOLIB || COMPILE_TEST
+	select REGMAP_I2C
+	help
+	  This option enables support for the TI LM3644 dual LED flash
+	  driver, which provides flash and torch modes.
+
+	  To compile this driver as a module, choose M here: the module
+	  will be called leds-lm3644.
+
 config LEDS_MAX77693
 	tristate "LED support for MAX77693 Flash"
 	depends on V4L2_FLASH_LED_CLASS || !V4L2_FLASH_LED_CLASS
