@@ -11,6 +11,7 @@
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/leds/common.h>
 #include <dt-bindings/soc/samsung,exynos-usi.h>
 #include <dt-bindings/usb/pd.h>
 #include "gs101-pinctrl.h"
@@ -184,6 +185,25 @@
 	};
 };
 
+&hsi2c_15 {
+	status = "okay";
+
+	led-controller@63 {
+		compatible = "ti,lm3644";
+		reg = <0x63>;
+		enable-gpios = <&gpp8 2 GPIO_ACTIVE_HIGH>;
+
+		led {
+			function = LED_FUNCTION_FLASH;
+			color = <LED_COLOR_ID_WHITE>;
+			led-sources = <1>, <2>;
+			led-max-microamp = <89300>;
+			flash-max-microamp = <729000>;
+			flash-max-timeout-us = <400000>;
+		};
+	};
+};
+
 &hsi2c_13 {
 	status = "okay";
 
@@ -341,6 +361,12 @@
 };
 
 &usi13 {
+	samsung,mode = <USI_MODE_I2C>;
+
+	status = "okay";
+};
+
+&usi15 {
 	samsung,mode = <USI_MODE_I2C>;
 
 	status = "okay";
