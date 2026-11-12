@@ -805,6 +805,36 @@
 			};
 		};
 
+		usi15: usi@10da00c0 {
+			compatible = "google,gs201-usi", "samsung,exynos850-usi";
+			reg = <0x10da00c0 0x20>;
+			ranges;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			clocks = <&cmu_peric1 CLK_GOUT_PERIC1_USI15_USI_PCLK>,
+				 <&cmu_peric1 CLK_GOUT_PERIC1_USI15_USI_IPCLK>;
+			clock-names = "pclk", "ipclk";
+			samsung,sysreg = <&sysreg_peric1 0x1018>;
+
+			status = "disabled";
+
+			hsi2c_15: i2c@10da0000 {
+				compatible = "google,gs201-hsi2c",
+					     "samsung,exynosautov9-hsi2c";
+				reg = <0x10da0000 0xc0>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				clocks = <&cmu_peric1 CLK_GOUT_PERIC1_USI15_USI_IPCLK>,
+					 <&cmu_peric1 CLK_GOUT_PERIC1_USI15_USI_PCLK>;
+				clock-names = "hsi2c", "hsi2c_pclk";
+				interrupts = <GIC_SPI 696 IRQ_TYPE_LEVEL_HIGH 0>;
+				pinctrl-0 = <&hsi2c15_bus>;
+				pinctrl-names = "default";
+
+				status = "disabled";
+			};
+		};
+
 		cmu_hsi0: clock-controller@11000000 {
 			compatible = "google,gs201-cmu-hsi0";
 			reg = <0x11000000 0x10000>;
