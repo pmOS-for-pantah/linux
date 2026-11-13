@@ -81,6 +81,18 @@
 		regulator-max-microvolt = <1800000>;
 		regulator-always-on;
 	};
+
+	wlan_pwr: regulator-wlan {
+		compatible = "regulator-fixed";
+		regulator-name = "wlan-reg-on";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		gpio = <&gph2 4 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+		startup-delay-us = <200000>;
+		pinctrl-0 = <&wlan_reg_on>;
+		pinctrl-names = "default";
+	};
 };
 
 &acpm_ipc {
@@ -139,6 +151,36 @@
 	status = "okay";
 };
 
+&pcie_1 {
+	pinctrl-0 = <&pcie1_clkreq>, <&pcie1_perst>, <&wlan_dev_wake>,
+		    <&wlan_host_wake>;
+	pinctrl-names = "default";
+
+	status = "okay";
+
+	pcie@0,0 {
+		compatible = "pciclass,0604";
+		device_type = "pci";
+		reg = <0x0 0x0 0x0 0x0 0x0>;
+		bus-range = <0x01 0xff>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+		vpcie3v3-supply = <&wlan_pwr>;
+
+		wifi@0,0 {
+			compatible = "pci14e4,4441";
+			reg = <0x10000 0x0 0x0 0x0 0x0>;
+			brcm,board-type = "google,gs201-panther";
+			memory-region = <&wifi_dma_pool>;
+		};
+	};
+};
+
+&pcie_1_phy {
+	status = "okay";
+};
+
 &pinctrl_far_alive {
 	bt_host_wake: bt-host-wake-pins {
 		samsung,pins = "gpa6-6";
@@ -160,6 +202,13 @@
 		samsung,pin-pud = <GS101_PIN_PULL_UP>;
 		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
 	};
+	wlan_host_wake: wlan-host-wake-pins {
+		samsung,pins = "gpa6-1";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_DOWN>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
+
 };
 
 &pinctrl_gpio_alive {
@@ -326,6 +375,26 @@
 	};
 };
 
+&pinctrl_hsi2 {
+	wlan_reg_on: wlan-reg-on-pins {
+		samsung,pins = "gph2-4";
+		samsung,pin-function = <GS101_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+		samsung,pin-con-pdn = <GS101_PIN_PDN_PREV>;
+		samsung,pin-pud-pdn = <GS101_PIN_PULL_NONE>;
+	};
+
+	wlan_dev_wake: wlan-dev-wake-pins {
+		samsung,pins = "gph2-5";
+		samsung,pin-function = <GS101_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <GS101_PIN_PULL_DOWN>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+		samsung,pin-con-pdn = <GS101_PIN_PDN_PREV>;
+		samsung,pin-pud-pdn = <GS101_PIN_PULL_DOWN>;
+	};
+};
+
 &pinctrl_hsi1 {
 	/*
 	 * The touchscreen SPI bus is shared with the AoC, which takes it while
@@ -374,6 +443,13 @@
 		alloc-ranges = <0x0 0x80000000 0x80000000>;
 		linux,cma-default;
 	};
+	wifi_dma_pool: wifi-dma-pool {
+		compatible = "restricted-dma-pool";
+		size = <0x1000000>;
+		alignment = <0x0 0x200000>;
+		alloc-ranges = <0x0 0x80000000 0x80000000>;
+	};
+
 };
 
 &serial_apm1 {
