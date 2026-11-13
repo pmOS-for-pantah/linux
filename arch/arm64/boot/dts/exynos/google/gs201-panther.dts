@@ -190,6 +190,13 @@
 		samsung,pin-pud = <GS101_PIN_PULL_UP>;
 		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
 	};
+
+	if_pmic_fg_int: if-pmic-fg-int-pins {
+		samsung,pins = "gpa9-3";
+		samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+		samsung,pin-pud = <GS101_PIN_PULL_UP>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
 };
 
 &hsi2c_15 {
@@ -264,6 +271,15 @@
 				};
 			};
 		};
+	};
+
+	fuel-gauge@36 {
+		compatible = "maxim,max77759-fg";
+		reg = <0x36>;
+		interrupts-extended = <&gpa9 3 IRQ_TYPE_LEVEL_LOW>;
+		pinctrl-0 = <&if_pmic_fg_int>;
+		pinctrl-names = "default";
+		shunt-resistor-micro-ohms = <5000>;
 	};
 
 	pmic@66 {
