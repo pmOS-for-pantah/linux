@@ -427,6 +427,13 @@
 		interrupt-controller;
 		#interrupt-cells = <2>;
 	};
+
+	hsi2c8_bus: hsi2c8-bus-pins {
+		samsung,pins = "gpp16-0", "gpp16-1";
+		samsung,pin-function = <GS101_PIN_FUNC_3>;
+		samsung,pin-pud = <GS101_PIN_PULL_NONE>;
+		samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+	};
 };
 
 &pinctrl_peric1 {
